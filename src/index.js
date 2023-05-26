@@ -1,17 +1,24 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOMClient from "react-dom/client";
+import App from "./App";
+import { UserContextProvider } from './utils/UserContext';
+import { FormStepContextProvider } from './utils/FormStepContext';
+import { BrowserRouter as Router } from "react-router-dom"
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
+
+
+ReactDOMClient.createRoot(document.getElementById("root")).render(
+    <FormStepContextProvider>
+    <UserContextProvider>
+    <Router>
     <App />
-  </React.StrictMode>
+    </Router>
+    </UserContextProvider>
+     </FormStepContextProvider>
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+// Hot Module Replacement (HMR) - Remove this snippet to remove HMR.
+// Learn more: https://www.snowpack.dev/#hot-module-replacement
+if (import.meta.hot) {
+  import.meta.hot.accept();
+}
