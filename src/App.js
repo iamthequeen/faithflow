@@ -1,25 +1,31 @@
 import React, { useContext, useEffect } from "react";
 import { Box, Button, ButtonGroup, CssBaseline, ThemeProvider, createTheme } from "@mui/material";
 import { getCurrentFormStep } from "./utils/helpers";
-import { FormStepContext } from "./utils/FormStepContext";
+import { UserContext } from "./utils/UserContext";
 import LoadingScreen from "./components/ui/LoadingScreen/LoadingScreen";
 import NewUserForm from "./components/NewUserForm/NewUserForm"
 import HabitTrackerPage from "./pages/HabitTrackerPage/HabitTrackerPage"
 import Homepage from "./pages/routes/Homepage/Homepage"
 import IdeasPage from "./pages/routes/IdeasPage/IdeasPage"
+import LogoutPage from "./pages/routes/LogoutPage/LogoutPage"
 import LandingPage from "./pages/routes/LandingPage/LandingPage"
 import ProfilePage from "./pages/routes/ProfilePage/ProfilePage"
 import HabitEditor from "./pages/HabitEditor/HabitEditor";
 import { Route, Routes } from 'react-router-dom'
 import AccountSettings from "./components/AccountSettings/AccountSettings";
+import TermsAndConditions from "./components/TermsAndConditions/TermsAndConditions";
 import LoginForm from "./components/LoginForm/LoginForm";
 import ErrorPage from "./pages/routes/ErrorPage/ErrorPage";
+import ProtectLogout from "./pages/routes/ProtectLogout/ProtectLogout";
+import ProtectedRoute from "./pages/routes/ProtectedRoute/ProtectedRoute";
+import UserNavigation from "./components/UserNavigation/UserNavigation";
+
 
 function App() {
 
-    const {
-        formStep
-    } = useContext(FormStepContext)
+    // const {
+    //     justLoggedOut, setJustLoggedOut
+    // } = useContext(UserContext)
 
     const theme = createTheme({
          typography: {
@@ -33,8 +39,6 @@ function App() {
         defaultProps: {
           variant: "contained",
           disableElevation: true,
-        },
-        styleOverrides: {
         },
       },
       MuiOutlinedInput: {
@@ -52,6 +56,15 @@ function App() {
           },
         },
       },
+    //   MuiBottomNavigationAction: {
+    //     styleOverrides: {
+    //       root: {
+    //         '& .Mui-selected': {
+    //       color: '#655FB1',
+    //     },
+    //       },
+    //     },
+    //   },
       MuiListItemButton: {
         styleOverrides: {
           root: {
@@ -170,14 +183,19 @@ function App() {
             background: "#000",
           }}
         >
-    {/*    <HabitEditor/> */}
+    {/*   <HabitEditor/>*/}
      {/*   <LandingPage/> */}
-       {/* <NewUserForm /> */}
-     {/*   <HabitTrackerPage />*/}
+       {/*   <NewUserForm /> */}
+    {/*   <Homepage /> */}
+     {/*   <HabitEditor />*/}
        {/*  {getCurrentFormSte(formStep)}  */}
      {/* <LoadingScreen /> */}
+      {/*   <IdeasPage /> */}
+     {/*     <ProfilePage />  */}
+    {/*   <TermsAndConditions />*/}
+     {/*     <AccountSettings/> */}
    {/*  <ErrorPage/> */}
-     <Routes>
+  <Routes>
          
          <Route exact={true} path="/" element={<LandingPage />}/>
           
@@ -185,10 +203,47 @@ function App() {
           
          
          <Route path="/login" element={<LoginForm/>} />
-           
-         <Route path="/myhome" element={<Homepage/>} />
 
-                    
+         <Route path="/logout" element={
+            <ProtectLogout>
+            <LogoutPage/>
+            </ProtectLogout>} />
+           
+       {/*  <Route path="/myhome" element={
+            <ProtectedRoute>
+            <Homepage/>
+            </ProtectedRoute>} />
+            */}
+
+            <Route path="/myhome" element={
+            <ProtectedRoute>
+            <UserNavigation/>
+            </ProtectedRoute>} />
+
+               <Route path="/habits" element={
+                <ProtectedRoute>
+                <HabitEditor/>
+                </ProtectedRoute>} />
+
+<Route path="/ideas" element={
+    <ProtectedRoute>
+    <IdeasPage/>
+    </ProtectedRoute>} />
+
+<Route path="/profile" element={
+    <ProtectedRoute>
+    <ProfilePage/>
+    </ProtectedRoute>} />
+<Route path="/accountsettings" element={
+    <ProtectedRoute>
+    <AccountSettings/>
+    </ProtectedRoute>} />
+<Route path="/termsofuse" element={
+    <ProtectedRoute>
+    <TermsAndConditions/>
+    </ProtectedRoute>} />
+
+
          <Route path="*" element={<ErrorPage />}/>
 
          </Routes>
