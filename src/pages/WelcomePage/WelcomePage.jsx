@@ -1,6 +1,7 @@
 import { Box, Grid, Typography, useTheme, Button } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import { FormStepContext } from "../../utils/FormStepContext";
+import { useNavigate } from "react-router-dom";
 import { STEPS } from "../../utils/formSteps";
 
 
@@ -13,11 +14,13 @@ useEffect(() => {
 })
 
 const theme = useTheme()
+
+const navigate = useNavigate()
  
   return (
     <Box component="main" 
     sx={{
-      paddingTop: "1.5rem",
+      paddingTop: "6rem",
       minHeight: "100vh",
       display: "flex",
       textAlign: "center",
@@ -28,7 +31,7 @@ const theme = useTheme()
 
         <Grid item>
         <Typography 
-        component="h1"
+         component="p"
         variant="h2"
         sx={{
           color: "#655FB1",
@@ -92,6 +95,7 @@ const theme = useTheme()
       }}
 
       onClick={() => {
+        window.scrollTo(0,0)
         setFormStep(STEPS.STRUGGLES)
       }}
       >
@@ -99,7 +103,7 @@ const theme = useTheme()
       </Button>
       </Grid>
 
-      <Grid item>
+       <Grid item>
       <Button variant="text"
           sx={{
             "&:hover": {
@@ -109,10 +113,43 @@ const theme = useTheme()
 
           onClick={() => {
             window.scrollTo(0,0)
-        setFormStep(STEPS.LOG_IN)
+        navigate("/login")
       }}
           >Already completed this before? Login</Button>
       </Grid>
+
+    {/* 
+    <Grid item>
+          { formStep === STEPS.LOG_IN ? <Button variant="text"
+          sx={{
+            "&:hover": {
+                textDecoration: "underline",
+            }
+
+          }}
+onClick={() => {
+        setFormStep(STEPS.SIGN_UP)
+      }}
+          
+          >Don't have an account? Sign Up!</Button> :
+          <Button variant="text"
+          sx={{
+            "&:hover": {
+                textDecoration: "underline",
+            }
+
+          }}
+onClick={() => {
+  if (location.pathname === "/login") {
+    navigate("/newuser")
+  }
+    }}
+          
+          >Don't have an account? Proceed to the new user page!</Button>
+          }
+          </Grid>
+    */}
+
       </Grid>
     </Box>
   );
