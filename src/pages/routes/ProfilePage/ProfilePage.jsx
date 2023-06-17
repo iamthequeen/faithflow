@@ -4,13 +4,16 @@ import { UserContext } from "../../../utils/UserContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faScroll, faCircleChevronRight, faGear, faUser, faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import Footer from "../../../components/Footer/Footer";
+import {auth} from "../../../utils/firebaseSetup"
+import Header from "../../../components/Header/Header";
+
 
 
 function ProfilePage() {
 
 const theme = useTheme()
 
-const { currentUser } = useContext(UserContext)
+const { currentUser, userFirstName } = useContext(UserContext)
 
 const optionsList = [
     {
@@ -29,14 +32,14 @@ const optionsList = [
             console.log("Terms of Use page")
         },
     },
-    {
-        id: 3,
-        avatarIcon: faGear,
-        name: "Settings",
-        onClickFunc: () => {
-            console.log("Settings page")
-        },
-    }
+    // {
+    //     id: 3,
+    //     avatarIcon: faGear,
+    //     name: "Settings",
+    //     onClickFunc: () => {
+    //         console.log("Settings page")
+    //     },
+    // }
 ]
 
 const optionsListElements =  optionsList.map(option => (
@@ -73,10 +76,13 @@ onClick={option.onClickFunc}
  
   return (
     <>
+    <Header/>
     <Box component="main" 
     sx={{
-      paddingTop: "1.5rem",
-      paddingBottom: "7rem",
+      padding: "7rem 0",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
       minHeight: "100vh",
       textAlign: "center",
       background: `linear-gradient(195.41deg, rgba(186, 207, 255, 0.67) 27.63%, #FFCEB7 74.14%)`,
@@ -104,13 +110,14 @@ onClick={option.onClickFunc}
 
       <Typography variant="body1">
       user's name: 
-      {JSON.stringify(currentUser, null, 2)}
+      {auth?.currentUser ? currentUser.displayName : userFirstName}
+    {/*  {JSON.stringify(currentUser, null, 2)} */}
 {/*      {currentUser.displayName}
 */}      </Typography>
 
       <Typography variant="body1">
       user's email: 
-      {JSON.stringify(currentUser, null, 2)}
+      {auth?.currentUser && currentUser.email}
 {/*      {currentUser.email}
 */}      </Typography>
       </Grid>
