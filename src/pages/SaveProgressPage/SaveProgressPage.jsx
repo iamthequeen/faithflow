@@ -4,6 +4,10 @@ import { faUser } from "@fortawesome/free-regular-svg-icons";
 import React, { useContext, useEffect, useState } from "react";
 import { FormStepContext } from "../../utils/FormStepContext";
 import { STEPS } from "../../utils/formSteps";
+import { useNavigate } from "react-router-dom";
+import { UserContext } from "../../utils/UserContext";
+
+
 
 
 function SaveProgressPage() {
@@ -13,24 +17,34 @@ function SaveProgressPage() {
 
     const { setFormStep } = useContext(FormStepContext)
 
+        const { setGuestUser } = useContext(UserContext)
 
-   
+
+
+   useEffect(() => {
+    window.scrollTo(0,0)
+})
+
+const navigate = useNavigate()
  
   return (
     <Box component="main" 
     sx={{
-      paddingTop: "1.5rem",
-      minHeight: "100vh",
+    //   paddingTop: "6rem",
+    //   minHeight: "100vh",
+    //   display: "flex",
+    paddingTop: "1.5rem",
       display: "flex",
       flexDirection: "column",
       justifyContent: "center",
+      minHeight: "100vh",
       textAlign: "center",
       background: `linear-gradient(44.1deg, ${theme.palette.whitePrimary.main} 36.52%, ${theme.palette.bluePrimary.main} 68.57%)`,
     }}
     >
-    <Typography 
-        component="h1"
-        variant="h4"
+      <Typography 
+        component="p"
+        variant="h5"
         sx={{
           color: "#655FB1",
     padding: "0.5rem 0",
@@ -44,7 +58,9 @@ function SaveProgressPage() {
 <Grid item>
 <Typography variant="h6" component="h1" sx={{
     fontWeight: 400,
-}}>If you'd like to save your progress, please create an account!</Typography>
+}}>If you'd like to save your progress, 
+<br/>
+please create an account!</Typography>
 </Grid>
 
 <Grid item>
@@ -69,7 +85,8 @@ sx={{
     <Grid item>
     <Button color="darkGraySecondary"
     onClick={() => {
-        setFormStep(STEPS.HOME)
+        setGuestUser(true)
+        navigate("/myhome")
     }}
     >
     No thanks
