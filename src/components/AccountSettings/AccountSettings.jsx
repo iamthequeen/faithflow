@@ -1,20 +1,20 @@
-import React, {useContext} from 'react'
+import React, {useContext, useEffect} from 'react'
 import { Box, Grid, Typography, useTheme, IconButton,Button, TextField,  } from "@mui/material";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft} from "@fortawesome/free-solid-svg-icons";
 import { Controller, useForm } from "react-hook-form";
-import { UserContext, useAuth } from "../../utils/UserContext";
+import { UserContext } from "../../utils/UserContext";
+import {auth} from "../../utils/firebaseSetup"
 
 
 function AccountSettings() {
 
     const theme = useTheme()
 
-//     const {
-// userFirstName
-//   } = useContext(UserContext);
+    const {
+userFirstName, setUserFirstName, currentUser
+  } = useContext(UserContext);
 
-const { currentUser } = useAuth()
 
     const {
     setValue,
@@ -23,13 +23,24 @@ const { currentUser } = useAuth()
     formState: { errors },
   } = useForm({
     defaultValues: {
-        firstName: "nj",
-      email: "guest@gmail.com",
+        firstName: !auth?.currentUser ? userFirstName : currentUser.displayName,
+      email: "",
     },
   });
 
+   const guestSubmit = async (data) => {
 
-    const onSubmit = async (data) => {
+        try {
+            await setUserFirstName(data.firstName)
+        alert ("Name Successfully Updated")
+        } catch (error) {
+        console.log(error)
+        alert ("Name Update Failed", error);
+      }
+    }
+
+
+    const userSubmit = async (data) => {
 
         try {
         alert ("User Created Successfully")
@@ -39,12 +50,17 @@ const { currentUser } = useAuth()
       }
     }
 
+useEffect(() => {
+    console.log(userFirstName)
+}, [userFirstName])
 
     return (
         <Box component="main" 
     sx={{
-      paddingTop: "1.5rem",
-      paddingBottom: "7rem",
+     padding: "7rem 0",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
       minHeight: "100vh",
       textAlign: "center",
       background: `linear-gradient(195.41deg, rgba(186, 207, 255, 0.67) 27.63%, #FFCEB7 74.14%)`,
@@ -70,19 +86,84 @@ const { currentUser } = useAuth()
 </Grid>
         </Grid>
 
-        <Grid item>
+{!auth?.currentUser ? 
+ <Grid item>
         <Box component="form" sx={{
            '& .MuiTextField-root': { m: 1, width: '25ch' },
         }}
-        onSubmit={handleSubmit(onSubmit)}
+        onSubmit={handleSubmit(guestSubmit)}
        >
     <Grid container direction="column" justifyContent="center" alignItems="center" spacing={1}>
 
 <Grid item>
 <Typography variant="body1" component="h2" sx={{
     fontWeight: 400,
-}}>Provide your personal information. <br/>
-{JSON.stringify(currentUser, 2, null)}
+}}>Update your information. <br/>
+</Typography>
+</Grid>
+
+<Grid item xs={6} md={8}>
+            <Controller
+              control={control}
+              name="firstName"
+              rules={{
+                required: {
+                  value: true,
+                  message: "First name is Required",
+                },
+              }}
+              // get the field state
+              render={({ field, fieldState: { error, invalid } }) => (
+                <TextField
+                id="firstName" label="First Name"
+                type="text"
+                margin="normal"
+                sx={{
+                    [theme.breakpoints.down("sm")]: {
+    width: "17rem",
+  },
+                }}
+                  {...field}
+                  required
+                  //  is error ??
+                  error={errors.firstName ? true : false}
+                  // show helper text if it is invalid
+                />
+              )}
+            />
+            <Typography variant="body2" color="textSecondary">
+              {errors.firstName?.message}
+            </Typography>
+          </Grid>
+         
+
+
+
+          <Grid item>
+            <Button 
+            sx={{
+              bgcolor: theme.palette.darkBluePrimary.main,
+            }}
+            type="submit">
+              Save
+            </Button>
+          </Grid>
+      </Grid>
+      </Box>
+        </Grid>
+ : (
+        <Grid item>
+        <Box component="form" sx={{
+           '& .MuiTextField-root': { m: 1, width: '25ch' },
+        }}
+        onSubmit={handleSubmit(userSubmit)}
+       >
+    <Grid container direction="column" justifyContent="center" alignItems="center" spacing={1}>
+
+<Grid item>
+<Typography variant="body1" component="h2" sx={{
+    fontWeight: 400,
+}}>Update your information. <br/>
 </Typography>
 </Grid>
 
@@ -172,7 +253,7 @@ const { currentUser } = useAuth()
           </Grid>
       </Grid>
       </Box>
-        </Grid>
+        </Grid>)}
 
         </Grid>
         </Box>
