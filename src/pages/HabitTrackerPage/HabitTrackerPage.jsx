@@ -10,35 +10,55 @@ import { UserContext } from '../../utils/UserContext';
 import { habits } from '../../utils/helpers';
 import { FormStepContext } from "../../utils/FormStepContext";
 import { STEPS } from "../../utils/formSteps";
+import { redirect, useLocation, useNavigate } from "react-router-dom";
 
 
-function HabitTrackerPage() {
+
+function HabitTrackerPage({handleClose}) {
   const theme = useTheme();
 
-  const { myHabits, setMyHabits } = useContext(UserContext)
+  const location = useLocation()
+const navigate = useNavigate()
+
+  const { myHabits, setMyHabits, setMyHab1, setMyHab2, setMyHab3 } = useContext(UserContext)
 
       const { setFormStep } = useContext(FormStepContext)
 
 
-  // const [visible, setVisible] = useState([]);
+  const [visible, setVisible] = useState([]);
 
-// const toggleVisibility = (id) => {
-//     const newVisible = [...visible];
-//     const index = newVisible.indexOf(id);
-//     if (index === -1) {
-//       newVisible.push(id);
-//     } else {
-//       newVisible.splice(index, 1);
-//     }
-//     setVisible(newVisible);
-//   }
-
-
-const [activeDescription, setActiveDescription] = useState(0);
+const toggleVisibility = (id) => {
+    const newVisible = [...visible];
+    const index = newVisible.indexOf(id);
+    if (index === -1) {
+      newVisible.push(id);
+    } else {
+      newVisible.splice(index, 1);
+    }
+    setVisible(newVisible);
+  }
 
   const [ habitsSelected, setHabitsSelected ] = useState()
 
-const handleAdd = (habitObject) => {
+useEffect(() => {
+    console.log(myHabits)
+}, [myHabits])
+
+ const handleSeparatingHabits = () => {
+    setMyHab1(myHabits[0])
+    setMyHab2(myHabits[1])
+    setMyHab3(myHabits[2])
+  }
+
+// const handleAdd = (habitObject) => {
+//     if (myHabits.length === 3) {
+//       setMyHabits((prevMyHabits) => [...prevMyHabits.slice(1), habitObject]);
+//     } else {
+//       setMyHabits((prevMyHabits) => [...prevMyHabits, habitObject]);
+//     }
+//   };
+
+  const handleAdd = (habitObject) => {
     if (myHabits.length === 3) {
       setMyHabits((prevMyHabits) => [...prevMyHabits.slice(1), habitObject]);
     } else {
@@ -48,9 +68,15 @@ const handleAdd = (habitObject) => {
 
   const handleRemove = (habitObject) => {
     setMyHabits((prevMyHabits) =>
-      prevMyHabits.filter((habit) => habit.id !== habitObject.id)
+      prevMyHabits.filter((habit) => habit.name !== habitObject.name)
     );
   };
+
+//   const handleRemove = (habitObject) => {
+//     setMyHabits((prevMyHabits) =>
+//       prevMyHabits.filter((habit) => habit.id !== habitObject.id)
+//     );
+//   };
 
 
   const habitTrackerListItems = habits.map(habit => (
@@ -66,18 +92,30 @@ sx={{
     width: "30rem",
     [theme.breakpoints.down('sm')]: {
         width: "18rem",
+    },
+    [theme.breakpoints.down(450)]: {
+        width: "14rem",
     } 
 }}
 >
 <ListItemButton
 onClick={() =>
-myHabits.some(myHab => myHab.id === habit.id) ? handleRemove(habit) : handleAdd(habit)
+myHabits.some(myHab => myHab.name === habit.name) ? handleRemove({
+    id: habit.id,
+    name: habit.name,
+    completed: habit.completed,
+}) : handleAdd({
+    id: habit.id,
+    name: habit.name,
+    completed: habit.completed,
+})
 }
 sx={{
      border: "3px solid",
-        borderColor: myHabits.some(myHab => myHab.id === habit.id) ? theme.palette.pinkPrimary.main : theme.palette.lightGrayPrimary.main,
+        borderColor: myHabits.some(myHab => myHab.name === habit.name) ? theme.palette.pinkPrimary.main : theme.palette.lightGrayPrimary.main,
      borderRadius: "15px",
-     color: theme.palette.blackPrimary.main,             backgroundColor: myHabits.some(myHab => myHab.id === habit.id) ? theme.palette.pinkPrimary.main : "transparent",
+     color: theme.palette.blackPrimary.main,             
+     backgroundColor: myHabits.some(myHab => myHab.name === habit.name) ? theme.palette.pinkPrimary.main : "transparent",
         "&:hover": {
       backgroundColor: theme.palette.pinkPrimary.main,
       border: `3px solid ${theme.palette.pinkPrimary.main}`,
@@ -90,15 +128,11 @@ primary={habit.name}
 </ListItemButton>
 <Box>
 <Button variant="" onClick={() => {
-   activeDescription === habit.id ? setActiveDescription(0) : setActiveDescription(habit.id)
+    toggleVisibility(habit.id)
 }}>
-{ activeDescription !== habit.id ?  "Why? \u2304" : "Hide \u2303"}
+{ !visible.includes(habit.id) ?  "Why? \u2304" : "Hide \u2303"}
 </Button>
-{ activeDescription === habit.id && <Typography
-sx={{
-  color: theme.palette.blackPrimary.main,
-}}
- variant="body2">
+{ visible.includes(habit.id) && <Typography variant="body2">
 {habit.description}
 </Typography>}
 </Box>
@@ -108,11 +142,8 @@ sx={{
   return (
     <Box component="main" 
     sx={{
-      paddingTop: "1.5rem",
+      paddingTop: "6rem",
       minHeight: "100vh",
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "center",
       textAlign: "center",
       background: `linear-gradient(44.1deg, ${theme.palette.whitePrimary.main} 36.52%, ${theme.palette.bluePrimary.main} 68.57%)`,
     }}
@@ -160,12 +191,19 @@ sx={{
             setHabitsSelected(false)
         } else {
             setHabitsSelected(true)
-           setFormStep(STEPS.SAVE_PROGRESS)
-        }
+            handleSeparatingHabits()
+          if ( location.pathname === "/myhome/habits") {
+        //    setFormStep(STEPS.SAVE_PROGRESS)
+         handleClose()
+       } else (
+         setFormStep(STEPS.SAVE_PROGRESS)
+       )
+    // change location from === to !==
+       }
 
       }}
       >
-      Continue
+    {location.pathname === "/myhome/habits" ? "Done" : "Continue"}
       </Button>
 </Grid>
         </Grid>
