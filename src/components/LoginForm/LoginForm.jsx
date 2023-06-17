@@ -39,6 +39,7 @@ const navigate = useNavigate()
 
         try {
             await login(data.email, data.password)
+                    // const { user } = await login(data.email, data.password)
         alert ("Successfully logged in")
         navigate("/myhome")
         } catch (error) {
@@ -54,7 +55,7 @@ const navigate = useNavigate()
     {location.pathname === "/login" && <Header/>}
     <Box component="main" 
     sx={{
-      paddingTop: "1.5rem",
+      paddingTop: "6rem",
       minHeight: "100vh",
       display: "flex",
       flexDirection: "column",
