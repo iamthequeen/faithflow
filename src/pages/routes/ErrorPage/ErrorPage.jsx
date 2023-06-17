@@ -1,56 +1,49 @@
 import React from 'react'
-// import './ErrorPage.css'
+import { Box, Grid, Typography, useTheme, Button, TextField } from "@mui/material";
+import './ErrorPage.css'
+import { Link } from 'react-router-dom';
+
 
 function ErrorPage() {
 
+    const theme = useTheme()
+
     return (
-        <section class="wrapper">
-
-        <div class="container">
-
-            <div id="scene" class="scene" data-hover-only="false">
-
-
-                <div class="circle" data-depth="1.2"></div>
-
-                <div class="one" data-depth="0.9">
-                    <div class="content">
-                        <span class="piece"></span>
-                        <span class="piece"></span>
-                        <span class="piece"></span>
-                    </div>
-                </div>
-
-                <div class="two" data-depth="0.60">
-                    <div class="content">
-                        <span class="piece"></span>
-                        <span class="piece"></span>
-                        <span class="piece"></span>
-                    </div>
-                </div>
-
-                <div class="three" data-depth="0.40">
-                    <div class="content">
-                        <span class="piece"></span>
-                        <span class="piece"></span>
-                        <span class="piece"></span>
-                    </div>
-                </div>
-
-                <p class="p404" data-depth="0.50">404</p>
-                <p class="p404" data-depth="0.10">404</p>
-
-            </div>
-
-            <div class="text">
-                <article>
-                    <p>Uh oh! Looks like you got lost. <br/>Go back to the homepage if you dare!</p>
-                    <button>i dare!</button>
-                </article>
-            </div>
-
-        </div>
-    </section>
+       <>
+       <Box component="main" 
+    sx={{
+      paddingTop: "6rem",
+      minHeight: "100vh",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      textAlign: "center",
+      background: `linear-gradient(44.1deg, ${theme.palette.whitePrimary.main} 36.52%, ${theme.palette.bluePrimary.main} 68.57%)`,
+    }}
+    >
+        <div className="error-page">
+    <div>
+      {/*  h1(data-h1='400') 400
+        p(data-p='BAD REQUEST') BAD REQUEST
+        h1(data-h1='401') 401
+        p(data-p='UNAUTHORIZED') UNAUTHORIZED
+        h1(data-h1='403') 403
+        p(data-p='FORBIDDEN') FORBIDDEN */}
+        <h1 data-h1="404">404</h1>
+        <p data-p="NOT FOUND">NOT FOUND</p>
+       {/* h1(data-h1='500') 500
+        p(data-p='SERVER ERROR') SERVER ERROR */}
+    </div>
+</div>
+<div id="particles-js"></div>
+<Link to="/" style={{
+              color: "#000"
+            }}>
+            Go Back
+            </Link>
+{/* <a href="#">Go Back</a> */}
+</Box>
+</>
     )
 }
 
