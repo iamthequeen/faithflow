@@ -1,10 +1,14 @@
-import { Box, Grid, Typography, useTheme, Button, TextField } from "@mui/material";
+import { Box, Grid, Typography, useTheme, Button, TextField, Alert } from "@mui/material";
 import React, { useContext, useEffect, useRef } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { UserContext } from "../../utils/UserContext";
 import { FormStepContext } from "../../utils/FormStepContext";
 import { STEPS } from "../../utils/formSteps";
 import { updateProfile } from "firebase/auth"
+import { addDoc, collection, doc, deleteDoc, writeBatch, setDoc } from "firebase/firestore";
+import { db, auth } from "../../utils/firebaseSetup";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 
 function SignupForm() {
@@ -12,18 +16,32 @@ function SignupForm() {
 const theme = useTheme()
 
 const {
-createAccount
+createAccount,
+personalStruggles,
+personalImprovements,
+setMyHabits,
+myHabits,
+setGuestUser,
+myHab1,
+myHab2,
+myHab3,
   } = useContext(UserContext);
 
       const { setFormStep } = useContext(FormStepContext)
 
+      const [signupError, setSignupError] = useState("")
+      const [habitDocCreated, setHabitDocCreated] = useState(false)
 
+
+const navigate = useNavigate()
   const {
-    setValue,
     handleSubmit,
     watch,
     control,
-    formState: { errors },
+    trigger,
+    dirtyFields,
+    formState: { errors, isDirty, isValid, isSubmitting },
+    formState,
   } = useForm({
     defaultValues: {
         firstName: "",
@@ -33,22 +51,75 @@ createAccount
     },
   });
 
+//    useEffect(() => {
+//   if ("confirmPassword" in formState.dirtyFields) {
+//     trigger("confirmPassword")
+//   }
+// }, [formState])
+
 
     const onSubmit = async (data) => {
+        
+setSignupError("")
 
+if (isValid) {
         try {
         // await createAccount(data.email, data.password)
+        
         const { user } = await createAccount(data.email, data.password)
     await updateProfile(user, {
-      displayName: data.name
+      displayName: data.firstName
     });
+    await setDoc(doc(db, "users", `${user.uid}`), {
+        uid: user.uid,
+        name: data.firstName,
+        email: data.email,
+        struggles: personalStruggles,
+        desiredImprovements: personalImprovements,
+        currentHabits: myHabits,
+    })
+
+    // await setDoc(doc(db, "usersHabits", `${user.uid}`), {
+    //     uid: user.uid,
+    //     habit1: myHab1,
+    //     habit2: myHab2,
+    //     habit3: myHab3,
+    // })
+
+
+//  const habitsCollectionRef = collection(db, `users/${userData.uid}/habits`)
+
+    const batch = writeBatch(db)
+if (!habitDocCreated) {
+   await myHabits.forEach((data, index) => {
+        const docRef = doc(db, `users/${user.uid}/habits/habit${index + 1}`)
+        // var newCityRef = db.collection('cities').doc()
+        // const docRef = db.collection('users').doc(`${userData.uid}`).collection('habits').doc(`habit${index}`)
+        batch.set(docRef, data)
+    })
+
+    await batch.commit().then(() => {
+        console.log("batch write completed!!!")
+        setHabitDocCreated(true)
+    }).catch((err) => {
+        console.error("batch write failed: ", err)
+        setHabitDocCreated(false)
+    })
+
+}
+    
         alert ("User Created Successfully")
+        setMyHabits([])
+        navigate("/myhome")
+        setFormStep(STEPS.WELCOME)
         // console.log("user info: ", user)
         } catch (error) {
+            setSignupError(error.message)
         console.error(error)
-        alert ("User creation failed:", error);
+        // alert (`User creation failed: ${error}`);
       }
 
+      }
       
     }
    
@@ -56,7 +127,7 @@ createAccount
   return (
     <Box component="main" 
     sx={{
-      paddingTop: "1.5rem",
+      paddingTop: "6rem",
       display: "flex",
       flexDirection: "column",
       justifyContent: "center",
@@ -170,11 +241,11 @@ createAccount
                 },
                 minLength: {
           value: 8,
-          message: "Password must be more than 8 characters"
+          message: "Password must be at least 8 characters"
           },
           maxLength: {
           value: 20,
-          message: "Password must be less than 20 characters"
+          message: "Password can only be up to 20 characters"
           },
               }}
               // get the field state
@@ -182,6 +253,7 @@ createAccount
                 <TextField
                 id="password" label="Password" 
                 type="password"
+                 helperText="Minimum: 8 characters, Maximum: 20 characters"
                 sx={{
                     [theme.breakpoints.down("sm")]: {
     width: "17rem",
@@ -242,12 +314,17 @@ createAccount
             </Typography>
           </Grid>
 
+         { signupError && <Grid item>
+          <Alert severity="error">{signupError}</Alert>
+          </Grid>}
+
 
           <Grid item>
             <Button 
             sx={{
               bgcolor: theme.palette.darkBluePrimary.main,
             }}
+            disabled={isSubmitting || Object.keys(formState.dirtyFields).length !== 4}
             type="submit">
               Sign Up
             </Button>
@@ -262,7 +339,8 @@ createAccount
           }}
 
           onClick={() => {
-        setFormStep(STEPS.HOME)
+            setGuestUser(true)
+        navigate("/myhome")
       }}
           >Actually, I'd rather continue as a guest</Button>
           </Grid>
