@@ -10,12 +10,16 @@ function StrugglesPage() {
     const theme = useTheme()
 
     const {
+    personalStruggles, setPersonalStruggles
+  } = useContext(UserContext);
+
+    const {
         setFormStep
     } = useContext(FormStepContext)
 
     const [ strugglesSelected, setStrugglesSelected ] = useState()
 
-const [ personalStruggles, setPersonalStruggles ] = useState([])
+// const [ personalStruggles, setPersonalStruggles ] = useState([])
 
 const handleAdd = (myStruggle) => {
     setPersonalStruggles(prevPersonalStruggles => [...prevPersonalStruggles, myStruggle])
@@ -32,64 +36,74 @@ const handleRemove = (myStruggle) => {
         {
             id: 1,
             name: "Temptation to do the wrong things",
+            keyword: "sin",
         },
         {
             id: 2,
             name: "Doubt",
+            keyword: "doubt",
         },
         {
             id: 3,
             name: "Forgiving others/myself",
+            keyword: "forgiveness",
         },
         {
             id: 4,
             name: "Having faith",
+            keyword: "faith",
         },
         {
             id: 5,
             name: "Fear of sharing my beliefs with others",
+            keyword: "fear",
         },
         {
             id: 6,
             name: "Feeling spiritually stagnant or disconnected",
+            keyword: "spiritual growth",
         },
         {
             id: 7,
             name: "Difficulty finding a community of believers",
+            keyword: "community",
         },
         {
             id: 8,
             name: "Praying consistently",
+            keyword: "prayer",
         },
         {
             id: 9,
             name: "Feeling overwhelmed with spiritual expectations",
+            keyword: "lifestyle"
         },
         {
             id: 10,
-            name: "Reading and understanding the bible",
+            name: "Reading & understanding the bible",
+            keyword: "understanding",
         },
         {
             id: 11,
-            name: "Getting distracted or being lazy",
+            name: "Getting distracted",
+            keyword: "distraction",
+        },
+        {
+            id: 12,
+            name: "Being lazy",
+            keyword: "laziness",
         },
     ]
-
-    // useEffect(() => {
-    //     if (personalStruggles.length === 0) {
-    //         setStrugglesSelected(false)
-    //     }
-    // })
 
 const struggleButtons = strugglesList.map((struggle) => (
     <Grid item key={struggle.id}>
     <Button
     sx={{
-        border: `3px solid ${theme.palette.lightGrayPrimary.main}`,
-        
+        border: `3px solid`,
+        borderColor: personalStruggles.includes(struggle.keyword) ? theme.palette.pinkPrimary.main : theme.palette.lightGrayPrimary.main,
         borderRadius: "15px",
         color: theme.palette.blackPrimary.main,
-                backgroundColor: personalStruggles.includes(struggle.name) ? theme.palette.pinkPrimary.main : theme.palette.whiteTertiary.main,
+                backgroundColor: personalStruggles.includes(struggle.keyword) ? theme.palette.pinkPrimary.main : theme.palette.whiteTertiary.main,
 
 
         "&:hover": {
@@ -99,10 +113,10 @@ const struggleButtons = strugglesList.map((struggle) => (
     }}
 
     onClick={() => {
-        if (!personalStruggles.includes(struggle.name)) {
-            handleAdd(struggle.name)
+        if (!personalStruggles.includes(struggle.keyword)) {
+            handleAdd(struggle.keyword)
         } else {
-            handleRemove(struggle.name)
+            handleRemove(struggle.keyword)
         }
         
     }}
@@ -110,33 +124,21 @@ const struggleButtons = strugglesList.map((struggle) => (
     </Grid>
 ))
 
-const {
-    
-  } = useContext(UserContext);
-
  
-
-  useEffect(() => {
-  
-  }, []);
-
    
  
   return (
     <Box component="main" 
     sx={{
-      paddingTop: "1.5rem",
+      paddingTop: "6rem",
       minHeight: "100vh",
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "center",
       textAlign: "center",
       background: `linear-gradient(44.1deg, ${theme.palette.whitePrimary.main} 36.52%, ${theme.palette.bluePrimary.main} 68.57%)`,
     }}
     >
     <Typography 
-        component="h1"
-        variant="h4"
+         component="p"
+        variant="h5"
         sx={{
           color: "#655FB1",
     padding: "0.5rem 0",
@@ -152,7 +154,7 @@ const {
     fontWeight: 400,
 }}>What are some things you struggle with?</Typography>
 {strugglesSelected === false && (
-<Typography variant="body1" sx={{
+<Typography variant="body2" sx={{
     color: theme.palette.redPrimary.main,
     fontWeight: 600,
 }}>Select at least 1 struggle.</Typography>
