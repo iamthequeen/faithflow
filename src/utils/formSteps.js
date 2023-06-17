@@ -8,5 +8,13 @@ export const STEPS = {
     SAVE_PROGRESS: 'SAVE_PROGRESS_STEP',
    SIGN_UP: 'SIGN_UP_STEP',
    LOG_IN: 'LOG_IN_STEP',
-   HOME: 'HOME_STEP',
+}
+
+export const FOOTER_STEPS = {
+    HOME: 'HOME_STEP',
+    HABITS: 'HABITS_STEP',
+    IDEAS: 'IDEAS_STEP',
+    PROFILE: 'PROFILE_STEP',
+    TERMS_OF_USE: 'TERMS_OF_USE_STEP',
+
 }
