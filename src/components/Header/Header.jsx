@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -16,10 +16,14 @@ import Button from '@mui/material/Button';
 import { Image } from 'mui-image'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars} from "@fortawesome/free-solid-svg-icons";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import ConfirmLogoutModal from "../ConfirmLogoutModal/ConfirmLogoutModal"
+import { UserContext } from "../../utils/UserContext"
+import { auth } from "../../utils/firebaseSetup"
+
 
 const drawerWidth = 240;
-const navItems = [
+const navItemsIfSignedOut = [
   {
     id: 1,
     name: 'Become a User',
@@ -31,8 +35,51 @@ const navItems = [
     link: '/login',
   }, ];
 
+  const navItemsIfSignedIn = [
+  {
+    id: 1,
+    name: 'My Home',
+    link: '/myhome',
+  },
+  {
+    id: 2,
+    name: 'Log Out',
+    link: '/logout',
+  }, ];
+
 function Header(props) {
     const { window } = props
+
+    const {currentUser, guestUser, logout, setJustLoggedOut} = useContext(UserContext)
+
+     const [openConfirmModal, setOpenConfirmModal] = useState(false);
+
+  const handleOpenModal = () => {
+    setOpenConfirmModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenConfirmModal(false);
+  };
+
+    const [currentNav, setCurrentNav] = useState(navItemsIfSignedOut)
+
+
+    const navigate = useNavigate()
+    const location = useLocation()
+
+    // const handleNav = () => {
+    //   !currentUser ? setCurrentNav(navItemsIfSignedOut) : setCurrentNav(navItemsIfSignedIn)
+    // }
+
+
+
+useEffect(() => {
+    (auth?.currentUser || guestUser) ? setCurrentNav(navItemsIfSignedIn) : setCurrentNav(navItemsIfSignedOut)
+
+    // handleNav()
+}, [currentUser])
+
 
     const theme = useTheme()
   const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -59,12 +106,29 @@ sx={{
             </Link>
       </Typography>
       <List>
-        {navItems.map((item) => (
+        {currentNav.map((item) => (
           <ListItem key={item.id} disablePadding>
-            <ListItemButton to={item.link} sx={{ textAlign: 'center',
+            <ListItemButton to={item.name !== "Log Out" ? item.link : ""} sx={{ textAlign: 'center',
             "&:hover": {
             bgcolor: theme.palette.lightBluePrimary.main,
-            } }}>
+            } }}
+            onClick={(() => {
+                if (item.name === "Log Out") {
+                handleOpenModal()
+                }
+            //     if (item.name === "Log Out" && confirmLogout) {
+            //         try {
+            //         logout()
+            //         setJustLoggedOut(true)
+            //         navigate("/logout")
+            //         // setConfirmLogout(false)
+            //    } catch(err) {
+            //     alert(err)
+            //    }
+            //     }
+                // setConfirmLogout(false)
+            })}
+            >
               <ListItemText primary={item.name} />
             </ListItemButton>
           </ListItem>
@@ -89,7 +153,7 @@ sx={{
             aria-label="open drawer"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: 'none' } }}
+            sx={{ mr: 2, display: location.pathname !== "/myhome" && { sm: 'none' } }}
           >
             <FontAwesomeIcon icon={faBars}/>
           </IconButton>
@@ -97,7 +161,7 @@ sx={{
           <Typography
             variant="h6"
             component="div"
-            sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
+            sx={{ flexGrow: 1, display: location.pathname === "/myhome" ? "none" : { xs: 'none', sm: 'block' } }}
           >
             <Link to="/" style={{
               textDecoration: "none",
@@ -107,10 +171,28 @@ sx={{
             </Link>
           </Typography>
           
-          <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-            {navItems.map((item) => (
-              <Link to={item.link} key={item.id}>
-                <Button color="darkBluePrimary" sx={{ color: '#fff', marginRight: "0.5rem" }}>
+          <Box sx={{ display: location.pathname === "/myhome" ? "none" : { xs: 'none', sm: 'block' } }}>
+            {currentNav.map((item) => (
+              <Link to={item.name !== "Log Out" ? item.link : ""} key={item.id} 
+              onClick={(() => {
+                  if (item.name === "Log Out") {
+                handleOpenModal()
+                }
+            //     if (item.name === "Log Out" && confirmLogout) {
+            //         try {
+            //         logout()
+            //         setJustLoggedOut(true)
+            //         navigate("/logout")
+            //         // setConfirmLogout(false)
+            //    } catch(err) {
+            //     alert(err)
+            //    }
+            //     }
+            //     setConfirmLogout(false)
+            })}
+               >
+                <Button color="darkBluePrimary" sx={{ color: '#fff', marginRight: "0.5rem" }}
+                 >
                 
                 {item.name}
               </Button>
@@ -130,13 +212,17 @@ sx={{
             keepMounted: true, // Better open performance on mobile.
           }}
           sx={{
-            display: { xs: 'block', sm: 'none' },
+            display: location.pathname === "/myhome" ? "block" : { xs: 'block', sm: 'none' },
             '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
           }}
         >
           {drawer}
         </Drawer>
       </Box>
+      <ConfirmLogoutModal
+      openConfirmModal={openConfirmModal}
+      handleCloseModal={handleCloseModal}
+      />
     </Box>
   );
 }
