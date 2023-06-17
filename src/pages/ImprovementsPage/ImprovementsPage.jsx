@@ -11,10 +11,14 @@ function ImprovementsPage() {
 
         const { setFormStep } = useContext(FormStepContext)
 
+const {
+    personalImprovements, setPersonalImprovements
+  } = useContext(UserContext);
+
         const [ improvementsSelected, setImprovementsSelected ] = useState()
 
 
-const [ personalImprovements, setPersonalImprovements ] = useState([])
+// const [ personalImprovements, setPersonalImprovements ] = useState([])
 
 const handleAdd = (desiredImprovement) => {
     setPersonalImprovements(prevPersonalImprovements => [...prevPersonalImprovements, desiredImprovement])
@@ -27,61 +31,72 @@ const handleRemove = (desiredImprovement) => {
   };
 
    
-    const ImprovementsList = [
+    const improvementsList = [
         {
             id: 1,
             name: "Praying daily",
+            keyword: "prayer",
         },
         {
             id: 2,
             name: "Studying the bible",
+            keyword: "studying",
         },
         {
             id: 3,
             name: "Practicing gratitude or journaling",
+            keyword: "gratitude",
         },
         {
             id: 4,
             name: "Attending church or small group meetings",
+            keyword: "church",
         },
         {
             id: 5,
             name: "Volunteering or serving others in the community",
+            keyword: "volunteering",
         },
         {
             id: 6,
             name: "Fasting or intentional periods of reflection",
+            keyword: "fasting",
         },
         {
             id: 7,
             name: "Memorizing scripture or Bible verses",
+            keyword: "reading",
         },
         {
             id: 8,
             name: "Sharing my faith with others",
+            keyword: "lifestyle",
         },
         {
             id: 9,
             name: "Regularly seeking out spiritual mentorship or guidance",
+            keyword: "guidance",
         },
         {
             id: 10,
             name: "Having more faith",
+            keyword: "faith",
         },
         {
             id: 11,
             name: "Taking better care of myself",
+            keyword: "selfcare",
         },
     ]
 
-const improvementButtons = ImprovementsList.map((improvement) => (
+const improvementButtons = improvementsList.map((improvement) => (
     <Grid item key={improvement.id}>
     <Button
     sx={{
         border: "3px solid",
-        borderColor: personalImprovements.includes(improvement.name) ? theme.palette.pinkPrimary.main : theme.palette.lightGrayPrimary.main,
+        borderColor: personalImprovements.includes(improvement.keyword) ? theme.palette.pinkPrimary.main : theme.palette.lightGrayPrimary.main,
         borderRadius: "15px",
-        color: theme.palette.blackPrimary.main,             backgroundColor: personalImprovements.includes(improvement.name) ? theme.palette.pinkPrimary.main : theme.palette.whiteTertiary.main,
+        color: theme.palette.blackPrimary.main,             backgroundColor: personalImprovements.includes(improvement.keyword) ? theme.palette.pinkPrimary.main : theme.palette.whiteTertiary.main,
 
 
         "&:hover": {
@@ -91,10 +106,10 @@ const improvementButtons = ImprovementsList.map((improvement) => (
     }}
 
     onClick={() => {
-        if (!personalImprovements.includes(improvement.name)) {
-            handleAdd(improvement.name)
+        if (!personalImprovements.includes(improvement.keyword)) {
+            handleAdd(improvement.keyword)
         } else {
-            handleRemove(improvement.name)
+            handleRemove(improvement.keyword)
         }
         
     }} 
@@ -102,9 +117,6 @@ const improvementButtons = ImprovementsList.map((improvement) => (
     </Grid>
 )) 
 
-const {
-    
-  } = useContext(UserContext);
 
 
    
@@ -112,18 +124,15 @@ const {
   return (
     <Box component="main" 
     sx={{
-      paddingTop: "1.5rem",
+      paddingTop: "6rem",
       minHeight: "100vh",
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "center",
       textAlign: "center",
       background: `linear-gradient(44.1deg, ${theme.palette.whitePrimary.main} 36.52%, ${theme.palette.bluePrimary.main} 68.57%)`,
     }}
     >
     <Typography 
-        component="h1"
-        variant="h4"
+         component="p"
+        variant="h5"
         sx={{
           color: "#655FB1",
     padding: "0.5rem 0",
@@ -139,7 +148,7 @@ const {
     fontWeight: 400,
 }}>What are some improvements you desire for your life?</Typography>
 {improvementsSelected === false && (
-<Typography variant="body1" sx={{
+<Typography variant="body2" sx={{
     color: theme.palette.redPrimary.main,
     fontWeight: 600,
 }}>Select at least 1 improvement.</Typography>
