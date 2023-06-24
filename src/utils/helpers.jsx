@@ -7,6 +7,7 @@ import HabitTrackerPage from "../pages/HabitTrackerPage/HabitTrackerPage";
 import SaveProgressPage from "../pages/SaveProgressPage/SaveProgressPage";
 import SignUpForm from "../components/SignupForm/SignupForm";
 import LoginForm from "../components/LoginForm/LoginForm";
+import AccountSettings from "../components/AccountSettings/AccountSettings";
 import Homepage from "../pages/routes/Homepage/Homepage";
 
 import { Typography } from "@mui/material";
@@ -44,7 +45,6 @@ export const findUser = async () => {
     //         ...doc.data()
     //     }
     // })
-// console.log(res)
     return res
 
 }
@@ -82,6 +82,8 @@ export const getFooterStep = (step) => {
       return <IdeasPage /> ;
       case FOOTER_STEPS.PROFILE: 
       return <ProfilePage /> ;
+      case FOOTER_STEPS.ACCOUNT_SETTINGS: 
+      return <AccountSettings /> ;
       case FOOTER_STEPS.TERMS_OF_USE: 
       return <TermsAndConditions /> ;
     default:
