@@ -5,13 +5,15 @@ import { createUserWithEmailAndPassword,
 import { auth } from "./firebaseSetup";
   import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
   import { faBookBible, faHandsPraying, faChurch } from "@fortawesome/free-solid-svg-icons";
+import LoadingScreen from "../components/ui/LoadingScreen/LoadingScreen";
 
 
 export const UserContext = createContext();
 
 export const UserContextProvider = ({ children }) => {
   //   User Info
-  const [userFirstName, setUserFirstName] = useState("Guest");
+ 
+ const [userFirstName, setUserFirstName] = useState("Guest");
 
   const [guestUser, setGuestUser] = useState(false);
 
@@ -19,10 +21,16 @@ const [currentUser, setCurrentUser] = useState(null);
 
 const [justLoggedOut, setJustLoggedOut] = useState(false);
 
+const [isHabitCompletionUpdate, setIsHabitCompletionUpdate] = useState(null)
+
+
 
  useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, user => {
+        
+
       setCurrentUser(user ? user : null)
+      
     // setCurrentUser(user)
     })
     return () => {
@@ -31,31 +39,8 @@ const [justLoggedOut, setJustLoggedOut] = useState(false);
     }
   })
 
-  useEffect(() => {
-    if (currentUser) {
-        console.log(true, `current user: ${currentUser}`)
-        console.log("authorized Current User", auth?.currentUser)
-    } else {
-        console.log(false, `current user: ${currentUser}`)
-        console.log("authorized Current User", auth?.currentUser)
-    }
-  }, [currentUser])
 
-  const getUserData = (uid) => {
-    //         try {
-    //             // const ideasData = await getDocs(ideasCollectionRef) 
-    //             // const filteredIdeasData = ideasData.docs.map(doc => ({...doc.data(), id: doc.id,}))
-    //             // setIdeasList(filteredIdeasData)
-    //             // console.log(filteredIdeasData)
-    //         } catch (err){
-    //             console.error(err)
-    //         }
-    //     }
-
-    // firebase.database().ref('users/' + uid).once("value", snap => {
-    //     console.log(snap.val())
-    // })
-}
+ 
 
 
 
@@ -63,7 +48,13 @@ const [justLoggedOut, setJustLoggedOut] = useState(false);
 
   const [ personalImprovements, setPersonalImprovements ] = useState([])
 
-  const [userData, setUserData] = useState({})
+  const [userData, setUserData] = useState({
+    name: "",
+    email: "",
+    uid: "",
+    struggles: [],
+    desiredImprovements: [],
+  })
 
     const [myHab1, setMyHab1] = useState({})
   const [myHab2, setMyHab2] = useState({})
@@ -109,12 +100,26 @@ const createAccount = (email, password) => {
 
 
   const logout = () => {
+    if (guestUser) {
+        setGuestUser(false)
+    } else {
     return signOut(auth)
+    }
   }
 
   const [hasDoneNewUserFormBefore, setHasDoneNewUserFormBefore] = useState(false)
 
+// Confirm Logout Modal
 
+     const [openConfirmModal, setOpenConfirmModal] = useState(false);
+
+  const handleOpenModal = () => {
+    setOpenConfirmModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenConfirmModal(false);
+  };
 
   // Values
   const val = {
@@ -132,7 +137,10 @@ const createAccount = (email, password) => {
     myHab1, setMyHab1,
     myHab2, setMyHab2,
     myHab3, setMyHab3,
-    hasDoneNewUserFormBefore, setHasDoneNewUserFormBefore
+    hasDoneNewUserFormBefore, setHasDoneNewUserFormBefore,
+    isHabitCompletionUpdate, setIsHabitCompletionUpdate,
+    openConfirmModal, setOpenConfirmModal,
+    handleOpenModal, handleCloseModal,
   };
 
   return <UserContext.Provider value={val}>{children}</UserContext.Provider>;
