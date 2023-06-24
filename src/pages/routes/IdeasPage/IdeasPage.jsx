@@ -1,12 +1,17 @@
-import { Box, Grid, Typography, List, ListItem, ListItemText, ListItemButton, useTheme, Stack, Chip } from '@mui/material';
-import React, {useState, useEffect} from 'react';
+import { Box, Grid, Typography, List, ListItem, ListItemText, ListItemButton, useTheme, Stack, Chip, Alert } from '@mui/material';
+import React, {useState, useEffect, useContext} from 'react';
 import Footer from "../../../components/Footer/Footer";
 import IdeasList from "../../../components/IdeasList/IdeasList"
 import Header from '../../../components/Header/Header';
+import { UserContext } from "../../../utils/UserContext";
+import {Link} from 'react-router-dom'
+
 
 function IdeasPage() {
 
     const theme = useTheme()
+
+    const { guestUser } = useContext(UserContext)
 
     // useEffect(() => {
     //     const getIdeasList = async () => {
@@ -42,6 +47,12 @@ function IdeasPage() {
         >
         <Grid container justifyContent="center"
 alignItems="center" direction="column" spacing={4}>
+{guestUser && <Alert severity="error">Please <Link
+ style={{
+              color: "rgb(95, 33, 32)"
+            }}
+            to="/signup">create an account</Link> to save your details.</Alert>
+}
 <Grid item> 
  <IdeasList/> 
 </Grid>
