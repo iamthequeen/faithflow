@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-regular-svg-icons";
 import React, { useContext, useEffect, useState } from "react";
 import { FormStepContext } from "../../utils/FormStepContext";
-import { STEPS } from "../../utils/formSteps";
+import { STEPS, FOOTER_STEPS } from "../../utils/formSteps";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../utils/UserContext";
 
@@ -15,7 +15,7 @@ function SaveProgressPage() {
     const theme = useTheme()
 
 
-    const { setFormStep } = useContext(FormStepContext)
+    const { setFormStep, setUserStep } = useContext(FormStepContext)
 
         const { setGuestUser } = useContext(UserContext)
 
@@ -87,6 +87,7 @@ sx={{
     onClick={() => {
         setGuestUser(true)
         navigate("/myhome")
+        setUserStep(FOOTER_STEPS.HOME)
     }}
     >
     No thanks
