@@ -1,4 +1,4 @@
-import { Box, Grid, Typography, useTheme, Button, Avatar, CircularProgress } from "@mui/material";
+import { Box, Grid, Typography, useTheme, Button, Avatar, CircularProgress, Alert } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../../utils/UserContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -10,6 +10,8 @@ import Header from "../../../components/Header/Header";
 import { collection, getDocs, onSnapshot, writeBatch, doc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import HabitTrackerPage from "../../HabitTrackerPage/HabitTrackerPage";
+import {Link, useLocation} from 'react-router-dom'
+
 
 
 function Homepage() {
@@ -33,6 +35,9 @@ const [bar, setBar] = useState(0);
 // const [ numOfCompletedHabits ] = useState(calculateCompletedHabits(myHabits))
 
 const [ numOfCompletedHabits, setNumOfCompletedHabits ] = useState(0)
+
+let location = useLocation()
+      let from = location.state?.from?.pathname || "/";
 
 
 
@@ -70,8 +75,8 @@ const fetchUserData = async () => {
 setGotUserData(false)
      try {
       const res = await findUser()
-// console.log(res)
     setUserData({...res})
+
     } catch (error) {
       console.error(error)
       setGotUserData(false)
@@ -106,21 +111,12 @@ useEffect(() => {
     // optional chaining
     if (auth?.currentUser && !gotUserData) {
     fetchUserData()
-    console.log(auth?.currentUser?.uid)
     }
 })
 
-useEffect(() => {
-
- console.log(myHabits)
-
-}, [myHabits]);
 
 
 
-useEffect(() => {
-    console.log(userData)
-}, [userData])
 
 // useEffect(() => {
 //    if (userData) {
@@ -212,9 +208,7 @@ const barColor = () => {
 //     }
 // })
 
-// useEffect(() => {
-//     console.log(myHabits)
-// }, [myHabits])
+
  
   return (
     <>
@@ -231,7 +225,12 @@ const barColor = () => {
     }}
     >
     <Grid container justifyContent="center" alignItems="center" direction="column" spacing={4}>
- 
+ {guestUser && <Alert severity="error">Please <Link
+ style={{
+              color: "rgb(95, 33, 32)"
+            }}
+            to="/signup">create an account</Link> to save your details.</Alert>
+}
 
        {userData.length === 0 ? <Grid item>
        <CircularProgress/>
