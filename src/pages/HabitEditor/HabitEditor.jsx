@@ -12,6 +12,7 @@ import HabitsModal from '../../components/HabitsModal/HabitsModal';
 import Header from '../../components/Header/Header';
 import { doc, collection, updateDoc, onSnapshot, runTransaction } from "firebase/firestore";
 import {auth, db} from "../../utils/firebaseSetup"
+import {Link} from 'react-router-dom'
 
 
 
@@ -108,7 +109,6 @@ const unsubscribe = onSnapshot(habitsCollectionRef, (snapshot) => {
         updatedCompletionArr.push(doc.data().name)
       }
       })
-      console.log("updated arr:", updatedHabitsArr)
       setMyHabits(updatedHabitsArr)
       setSelectedItems(updatedCompletionArr)
   },
@@ -143,16 +143,12 @@ unsubscribe()
         // }
     };
 
-useEffect(() => {
-    console.log(myHabits)
-}, [myHabits])
+
     // useEffect(() => {
     //     setValue("habitCheckBoxes", selectedItems);
     // }, [selectedItems]);
 
-    useEffect(() => {
-        console.log("selected items", selectedItems)
-    }, [selectedItems])
+
 
     const initialChecks = () => {
         myHabits.map(myHab => {
@@ -160,7 +156,6 @@ useEffect(() => {
                 setSelectedItems((prevItems) => [...prevItems, myHab.name])
             }
         })
-        console.log("initial check just ran!")
         setSelectedItems((prevItems) =>
       prevItems.filter((val, index) => prevItems.indexOf(val) === index))
 
@@ -172,11 +167,7 @@ useEffect(() => {
         setInitialLoad(false)
     }, [])
 
-    useEffect(()=> {
-                console.log("my habits", myHabits)
-
-    }, [myHabits])
-
+ 
     const onSubmit = async (data) => {
 
         setCompletionLoading(true)
@@ -241,7 +232,6 @@ try {
         transaction.update(habit3DocRef, { completed: newCompletion})
     })
     
-    console.log("Transaction successfully committed!")
 } catch (err) {
     console.error("Transaction failed:", err)
 }
@@ -254,7 +244,10 @@ setCompletionLoading(false)
 
 
     const habitFormElements = myHabits.map((habit, index) => (
-      completionLoading || initialLoad ? <LinearProgress color="secondary" key={habit.name} /> :  <FormControlLabel
+      completionLoading || initialLoad ? <LinearProgress color="secondary" key={habit.name} sx={{
+        marginBottom: "1rem",
+      }}
+        /> :  <FormControlLabel
             key={habit.name}
             control={
                 <Controller
@@ -297,7 +290,12 @@ setCompletionLoading(false)
                     direction="column"
                     alignItems="center"
                     justifyContent="center" spacing={2}>
-
+{guestUser && <Alert severity="error">Please <Link
+ style={{
+              color: "rgb(95, 33, 32)"
+            }}
+            to="/signup">create an account</Link> to save your details.</Alert>
+}
                     <Grid item>
                          <FormControl sx={{
                             margin: 3,
@@ -340,11 +338,11 @@ setCompletionLoading(false)
                     </Grid>
  { 
                     completionLoading && <Grid item>
-                    <Alert severity="info">Habits updating...</Alert>
+                    <Alert severity="info">Habits completion updating...</Alert>
                     </Grid>
 }                   { 
                     openSuccessAlert && <Grid item>
-                    <Alert severity="success">Your habits successfully updated!</Alert>
+                    <Alert severity="success">Your habits completion successfully updated!</Alert>
                     </Grid>
 }
                     <Grid item>
@@ -362,6 +360,7 @@ setCompletionLoading(false)
             <Footer />
             <HabitsModal
                 open={open}
+                setOpen={setOpen}
                 handleClose={handleClose}
             />
         </>
