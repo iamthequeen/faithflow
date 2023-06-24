@@ -3,15 +3,28 @@ import React, { useContext, useEffect, useState } from "react";
 import { FormStepContext } from "../../utils/FormStepContext";
 import { useNavigate } from "react-router-dom";
 import { STEPS } from "../../utils/formSteps";
+import { UserContext } from "../../utils/UserContext";
 
 
 function WelcomePage() {
 
     const { setFormStep } = useContext(FormStepContext)
 
+     const { setMyHabits, setPersonalStruggles, setPersonalImprovements } = useContext(UserContext)
+
 useEffect(() => {
     window.scrollTo(0,0)
 })
+
+const resetData = () => {
+setMyHabits([])
+        setPersonalStruggles([])
+        setPersonalImprovements([])
+}
+
+ useEffect(() => {
+        resetData()
+    }, [])
 
 const theme = useTheme()
 
