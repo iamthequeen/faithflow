@@ -7,9 +7,16 @@ import Header from "../../../components/Header/Header"
 import {Image} from "mui-image"
 import { faStar, faHeart, faCloud } from "@fortawesome/free-solid-svg-icons";
 import TestimonialsCarousel from "../../../components/ui/TestimonialsCarousel/TestimonialsCarousel";
+import {useLocation, useNavigate} from 'react-router-dom'
+import LoadingScreen from "../../../components/ui/LoadingScreen/LoadingScreen";
+
  
 
 function LandingPage() {
+
+
+const { currentUser, guestUser } = useContext(UserContext)
+
 
     const boxItemsData = [
         {
