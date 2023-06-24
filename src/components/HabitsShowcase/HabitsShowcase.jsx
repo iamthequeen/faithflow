@@ -108,7 +108,7 @@ sx={{
        <> <Typography variant="body2">Completed{" "} 
         {numOfCompletedHabits}/{myHabits.length}</Typography>
        <HabitsList>
-      {habitElements}
+       {habitElements} 
     </HabitsList>
     </>
     }
