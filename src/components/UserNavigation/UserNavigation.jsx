@@ -3,6 +3,7 @@ import { getFooterStep } from "../../utils/helpers";
 import { FormStepContext } from "../../utils/FormStepContext";
 import Header from "../Header/Header";
 import { UserContext } from "../../utils/UserContext";
+import { redirect, useLocation, useNavigate } from "react-router-dom";
 
 
 function UserNavigation() {
@@ -10,6 +11,7 @@ function UserNavigation() {
     const { guestUser } = useContext(UserContext)
    
        const { userStep } = useContext(FormStepContext)
+
 
        useEffect(() => {
        if (guestUser) {
@@ -22,6 +24,7 @@ function UserNavigation() {
         window.addEventListener("beforeunload", unloadCallback)
         return () => window.removeEventListener("beforeunload", unloadCallback)}
        })
+
 
   return (
     <>
