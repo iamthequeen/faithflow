@@ -6,9 +6,10 @@ import { useNavigate } from 'react-router-dom';
 
 
 function ConfirmLogoutModal(props) {
-const {openConfirmModal, handleCloseModal, setConfirmLogout} = props
+// const {openConfirmModal, handleCloseModal, setConfirmLogout} = props
 
-    const { logout, setJustLoggedOut} = useContext(UserContext)
+    const { logout, setJustLoggedOut, openConfirmModal, setOpenConfirmModal,
+    handleOpenModal, handleCloseModal,} = useContext(UserContext)
 
     const navigate = useNavigate()
 
@@ -33,6 +34,7 @@ const {openConfirmModal, handleCloseModal, setConfirmLogout} = props
               try {
                     logout()
                     setJustLoggedOut(true)
+                    handleCloseModal()
                     navigate("/logout")
                } catch(err) {
                 alert(err)
