@@ -15,7 +15,6 @@ import {
   useTheme,
 } from "@mui/material";
 import HabitTrackerPage from '../../pages/HabitTrackerPage/HabitTrackerPage';
-import LoadingModal from '../ui/LoadingModal/LoadingModal';
 import { useState } from 'react';
 
 function HabitsModal({ open, handleClose, setOpen}) {
