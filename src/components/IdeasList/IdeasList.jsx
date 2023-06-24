@@ -1,10 +1,12 @@
-import { Box, Grid, Typography, Tab, List, ListItem, ListItemText, ListItemButton, useTheme, Stack, Chip, Tabs } from '@mui/material';
-import React, {useState, useEffect} from 'react';
+ import { Box, Grid, Typography, Tab, List, ListItem, ListItemText, ListItemButton, useTheme, Stack, Chip, Tabs } from '@mui/material';
+import React, {useState, useEffect, useContext} from 'react';
 import {db} from "../../utils/firebaseSetup"
 import { getDocs, collection } from "firebase/firestore"
 import IdeasListItems from '../IdeasListItems/IdeasListItems';
-import {ideasList} from "../../utils/data"
-import {habits} from "../../utils/helpers"
+import {UserContext} from "../../utils/UserContext"
+import {Link} from 'react-router-dom'
+import {auth} from "../../utils/firebaseSetup"
+
 
 
 
@@ -20,74 +22,68 @@ function IdeasList() {
 
     const theme = useTheme()
 
+    const { guestUser, currentUser, userData } = useContext(UserContext)
+
     const [value, setValue] = useState(0)
+    const [allIdeasLoading, setAllIdeasLoading] = useState(true)
+    const [ideasList, setIdeasList] = useState([])
 
     const handleTabChange = (event, newValue) => {
         setValue(newValue)
     }
 
-    useEffect(() => {
-        console.log(value)
-    }, [value])
+   
 
-      const storedStruggles = ["faith","spiritual growth","understanding"]
-  const storedImprovements = ["volunteering","lifestyle","gratitude"]
+//       const storedStruggles = userData.struggles
+//   const storedImprovements = userData.desiredImprovements
+
+//   const storedStrugsAndImprovs = userData ? [...storedStruggles, ...storedImprovements] : []
+
+const storedStruggles = userData.struggles
+const storedImprovements = userData.desiredImprovements
 
   const storedStrugsAndImprovs = [...storedStruggles, ...storedImprovements]
+
 
     const [suggestedIdeas, setSuggestedIdeas] = useState([])
 
   const [isSuggestedEmpty, setIsSuggestedEmpty] = useState(true)
 
 
+    const ideasCollectionRef = guestUser ? collection(db, "limitedIdeas") : collection(db, "ideas")
 
-    const ideasCollectionRef = collection(db, "ideas")
+     const getIdeasList = async () => {
+            try {
+                const ideasData = await getDocs(ideasCollectionRef) 
+                const filteredIdeasData = ideasData.docs.map(doc => ({...doc.data(), id: doc.id,}))
+                setIdeasList(filteredIdeasData)
+                setAllIdeasLoading(false)
+            } catch (err){
+                console.error(err)
+            }
+        }
 
-    // useEffect(() => {
-    //     const getIdeasList = async () => {
-    //         try {
-    //             // const ideasData = await getDocs(ideasCollectionRef) 
-    //             // const filteredIdeasData = ideasData.docs.map(doc => ({...doc.data(), id: doc.id,}))
-    //             // setIdeasList(filteredIdeasData)
-    //             // console.log(filteredIdeasData)
-    //         } catch (err){
-    //             console.error(err)
-    //         }
-    //     }
+    useEffect(() => {
+        if (allIdeasLoading) {
+        getIdeasList()
+        } 
+    }, [allIdeasLoading])
 
-    //     getIdeasList()
-    // })
-
-    const storedHabits = [
-    {
-      name: "Read the Bible",
-    //   keyword: "read",
-      completed: false,
-    },
-    {
-      name: "Pray for at least 1 minute",
-    //   keyword: "prayer",
-      completed: false,
-    },
-    {
-      name: "Attend church",
-    //   keyword: "church",
-      completed: false,
-    },
-    {
-      name: "Write down 3 things I'm grateful for",
-    //   keyword: "gratitude",
-      completed: false,
-    },
-  ]
-
-  useEffect(() => {
-    const filteredIdeas = ideasList.filter((idea) =>
+    const populateSuggestedIdeas = () => {
+const filteredIdeas = ideasList.filter((idea) =>
       idea.tags.some((tag) => storedStrugsAndImprovs.includes(tag))
     );
     setSuggestedIdeas(filteredIdeas);
     setIsSuggestedEmpty(false)
-  }, []);
+    }
+
+  useEffect(() => {
+    if(currentUser && isSuggestedEmpty && ideasList.length !== 0) {
+populateSuggestedIdeas()
+    }
+    
+  }, [ideasList, isSuggestedEmpty, currentUser]);
+
 
 
   const renderIdeasBtns = (list, listName) => {
@@ -124,16 +120,9 @@ function IdeasList() {
             gap: "0.35rem",
           }}>
           {idea.tags.map(tag => {
-        //     if (composer.era === 'Renaissance'){
-        //       setColor('red')
-        // }
-        // if (composer.era === 'Baroque'){
-        //       setColor('blue')
-        // }
-        // storedStrugsAndImprovs.forEach(word => word === tag ? setTagColor("green") : "gray") 
+
            return <Chip size="small" key={tag} label={tag}
               sx={{
-                // bgcolor: "blue"
                 bgcolor: listName === "suggested" && storedStrugsAndImprovs.includes(tag) ? theme.palette.greenPrimary.main : theme.palette.lightGrayPrimary.main
               }}
               />}
@@ -146,54 +135,74 @@ function IdeasList() {
   
   }
 
-    const fullIdeasBtns = ideasList.map(idea => (
-        <ListItem key={idea.id}>
-<ListItemButton
-href={idea.websiteUrl}
-rel="noopener noreferrer"
-target="_blank"
-sx={{
-    border: `2px solid ${theme.palette.whiteTertiary.main}`,
-    "&:hover": {
-    bgcolor: theme.palette.whiteTertiary.main,
-    }
-}}
->
-<img src={`/images/thumbnail/${idea.mainTopic}.png`} alt="" style={{
-            width: "7rem",
-            height: "7rem",
-          }} />
-<Box
-sx={{
-            margin: "0.5rem",
-          }}
->
-<ListItemText 
-sx={{
+//     const fullIdeasBtns = ideasList.map(idea => (
+//         <ListItem key={idea.id}>
+// <ListItemButton
+// href={idea.websiteUrl}
+// rel="noopener noreferrer"
+// target="_blank"
+// sx={{
+//     border: `2px solid ${theme.palette.whiteTertiary.main}`,
+//     "&:hover": {
+//     bgcolor: theme.palette.whiteTertiary.main,
+//     }
+// }}
+// >
+// <img src={`/images/thumbnail/${idea.mainTopic}.png`} alt="" style={{
+//             width: "7rem",
+//             height: "7rem",
+//           }} />
+// <Box
+// sx={{
+//             margin: "0.5rem",
+//           }}
+// >
+// <ListItemText 
+// sx={{
 
-}}
-primary={idea.title}
-secondary={`Type: ${idea.type}`}
-/>
-<Stack direction="row"
-            flexWrap="wrap"
-            justifyContent="flex-start"
-            sx={{
-              gap: "0.35rem",
-            }}>
-            {idea.tags.map(tag => (
-                <Chip size="small" key={tag} label={tag} color="lightGrayPrimary" />
-            ))}
-</Stack>
-</Box>
-</ListItemButton>
-</ListItem>
-    ))
+// }}
+// primary={idea.title}
+// secondary={`Type: ${idea.type}`}
+// />
+// <Stack direction="row"
+//             flexWrap="wrap"
+//             justifyContent="flex-start"
+//             sx={{
+//               gap: "0.35rem",
+//             }}>
+//             {idea.tags.map(tag => (
+//                 <Chip size="small" key={tag} label={tag} color="lightGrayPrimary" />
+//             ))}
+// </Stack>
+// </Box>
+// </ListItemButton>
+// </ListItem>
+//     ))
 
   
     return (
         <>
-   
+ { guestUser ? 
+ <Box>
+ <Typography component="h1" variant="h3"
+ sx={{
+    textDecoration: "underline",
+ }}
+ >All</Typography>
+ <Box> 
+{allIdeasLoading ? <div>Loading...</div> : renderIdeasBtns(ideasList, "all")}
+ </Box>
+ {allIdeasLoading ? <Box/> : 
+<>
+<Typography variant="h6" component="p">Want a more extended list and even suggested ideas? <Link
+style={{
+              color: "#000"
+            }}
+ to="/signup">Create an account</Link>!</Typography>
+</>}
+ </Box> 
+ :      
+  <>  
     <Box
     sx={{
         borderBottom: 1, borderColor: 'divider',
@@ -220,8 +229,10 @@ secondary={`Type: ${idea.type}`}
       renderIdeasBtns(suggestedIdeas, "suggested")}
 </IdeasListItems>
 <IdeasListItems value={value} index={1}>
-{renderIdeasBtns(ideasList, "all")}
+{allIdeasLoading ? <div>Loading...</div> : renderIdeasBtns(ideasList, "all")}
 </IdeasListItems>
+        </>
+        }
         </>
     )
 }
