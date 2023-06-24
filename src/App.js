@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+  import React, { useContext, useEffect } from "react";
 import { Box, Button, ButtonGroup, CssBaseline, ThemeProvider, createTheme } from "@mui/material";
 import { getCurrentFormStep } from "./utils/helpers";
 import { UserContext } from "./utils/UserContext";
@@ -15,10 +15,13 @@ import { Route, Routes } from 'react-router-dom'
 import AccountSettings from "./components/AccountSettings/AccountSettings";
 import TermsAndConditions from "./components/TermsAndConditions/TermsAndConditions";
 import LoginForm from "./components/LoginForm/LoginForm";
+import SignupForm from "./components/SignupForm/SignupForm";
 import ErrorPage from "./pages/routes/ErrorPage/ErrorPage";
 import ProtectLogout from "./pages/routes/ProtectLogout/ProtectLogout";
 import ProtectedRoute from "./pages/routes/ProtectedRoute/ProtectedRoute";
+import ProtectSignup from "./pages/routes/ProtectSignup/ProtectSignup";
 import UserNavigation from "./components/UserNavigation/UserNavigation";
+import {useLocation} from 'react-router-dom'
 
 
 function App() {
@@ -167,7 +170,8 @@ function App() {
         }
     })
 
- 
+
+
   return (
     <ThemeProvider theme={theme}>
      <CssBaseline>
@@ -183,18 +187,7 @@ function App() {
             background: "#000",
           }}
         >
-    {/*   <HabitEditor/>*/}
-     {/*   <LandingPage/> */}
-       {/*   <NewUserForm /> */}
-    {/*   <Homepage /> */}
-     {/*   <HabitEditor />*/}
-       {/*  {getCurrentFormSte(formStep)}  */}
-     {/* <LoadingScreen /> */}
-      {/*   <IdeasPage /> */}
-     {/*     <ProfilePage />  */}
-    {/*   <TermsAndConditions />*/}
-     {/*     <AccountSettings/> */}
-   {/*  <ErrorPage/> */}
+
   <Routes>
          
          <Route exact={true} path="/" element={<LandingPage />}/>
@@ -208,40 +201,17 @@ function App() {
             <ProtectLogout>
             <LogoutPage/>
             </ProtectLogout>} />
+
+            <Route path="/signup" element={
+            <ProtectSignup>
+            <SignupForm/>
+            </ProtectSignup>} />
            
-       {/*  <Route path="/myhome" element={
-            <ProtectedRoute>
-            <Homepage/>
-            </ProtectedRoute>} />
-            */}
 
             <Route path="/myhome" element={
             <ProtectedRoute>
             <UserNavigation/>
             </ProtectedRoute>} />
-
-               <Route path="/habits" element={
-                <ProtectedRoute>
-                <HabitEditor/>
-                </ProtectedRoute>} />
-
-<Route path="/ideas" element={
-    <ProtectedRoute>
-    <IdeasPage/>
-    </ProtectedRoute>} />
-
-<Route path="/profile" element={
-    <ProtectedRoute>
-    <ProfilePage/>
-    </ProtectedRoute>} />
-<Route path="/accountsettings" element={
-    <ProtectedRoute>
-    <AccountSettings/>
-    </ProtectedRoute>} />
-<Route path="/termsofuse" element={
-    <ProtectedRoute>
-    <TermsAndConditions/>
-    </ProtectedRoute>} />
 
 
          <Route path="*" element={<ErrorPage />}/>
