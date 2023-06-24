@@ -2,12 +2,19 @@ import React, {useContext, useEffect} from 'react'
 import { Box, Grid, Typography, styled, useTheme, IconButton,Button, TextField, List, ListItem } from "@mui/material";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft} from "@fortawesome/free-solid-svg-icons";
+import { FormStepContext } from "../../utils/FormStepContext";
+import { FOOTER_STEPS } from "../../utils/formSteps"
 
 const Para = styled(Typography)({
 padding: "1rem 0",
 })
 
 function TermsAndConditions() {
+
+    const { setUserStep } = useContext(FormStepContext)
+
+
+
     return (
          <Box component="main" 
     sx={{
@@ -26,6 +33,9 @@ function TermsAndConditions() {
         >
         <Grid item>
         <IconButton
+        onClick={() => {
+            setUserStep(FOOTER_STEPS.PROFILE)
+        }}
         >
         <FontAwesomeIcon icon={faChevronLeft} color="black" size="xs"/>
         </IconButton>
