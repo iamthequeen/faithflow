@@ -3,12 +3,13 @@ import React, { useContext, useEffect, useRef } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { UserContext } from "../../utils/UserContext";
 import { FormStepContext } from "../../utils/FormStepContext";
-import { STEPS } from "../../utils/formSteps";
+import { STEPS, FOOTER_STEPS } from "../../utils/formSteps";
 import { updateProfile } from "firebase/auth"
 import { addDoc, collection, doc, deleteDoc, writeBatch, setDoc } from "firebase/firestore";
 import { db, auth } from "../../utils/firebaseSetup";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { redirect, useLocation, useNavigate } from "react-router-dom";
+import Header from "../Header/Header";
 
 
 function SignupForm() {
@@ -27,12 +28,12 @@ myHab2,
 myHab3,
   } = useContext(UserContext);
 
-      const { setFormStep } = useContext(FormStepContext)
+      const { setFormStep, setUserStep } = useContext(FormStepContext)
 
       const [signupError, setSignupError] = useState("")
       const [habitDocCreated, setHabitDocCreated] = useState(false)
 
-
+  const location = useLocation()
 const navigate = useNavigate()
   const {
     handleSubmit,
@@ -57,6 +58,20 @@ const navigate = useNavigate()
 //   }
 // }, [formState])
 
+function mapAuthCodeToMessage(authCode) {
+  switch (authCode) {
+    case "auth/invalid-password":
+      return "Password provided is not corrected";
+
+    case "auth/invalid-email":
+      return "Email provided is invalid";
+
+    // Many more authCode mapping here...
+
+    default:
+      return "";
+  }
+}
 
     const onSubmit = async (data) => {
         
@@ -76,7 +91,6 @@ if (isValid) {
         email: data.email,
         struggles: personalStruggles,
         desiredImprovements: personalImprovements,
-        currentHabits: myHabits,
     })
 
     // await setDoc(doc(db, "usersHabits", `${user.uid}`), {
@@ -99,7 +113,6 @@ if (!habitDocCreated) {
     })
 
     await batch.commit().then(() => {
-        console.log("batch write completed!!!")
         setHabitDocCreated(true)
     }).catch((err) => {
         console.error("batch write failed: ", err)
@@ -110,13 +123,16 @@ if (!habitDocCreated) {
     
         alert ("User Created Successfully")
         setMyHabits([])
-        navigate("/myhome")
+        setGuestUser(false)
+        navigate("/myhome")   
+        setUserStep(FOOTER_STEPS.HOME)
+
         setFormStep(STEPS.WELCOME)
         // console.log("user info: ", user)
-        } catch (error) {
-            setSignupError(error.message)
-        console.error(error)
-        // alert (`User creation failed: ${error}`);
+        } catch (err) {
+            
+            setSignupError(err.message)
+
       }
 
       }
@@ -125,6 +141,8 @@ if (!habitDocCreated) {
    
  
   return (
+    <>
+    {location.pathname === "/signup" && <Header/>}
     <Box component="main" 
     sx={{
       paddingTop: "6rem",
@@ -330,7 +348,7 @@ if (!habitDocCreated) {
             </Button>
           </Grid>
 
-          <Grid item>
+        {location.pathname !== "/signup" && <Grid item>
           <Button variant="text"
           sx={{
             "&:hover": {
@@ -341,12 +359,14 @@ if (!habitDocCreated) {
           onClick={() => {
             setGuestUser(true)
         navigate("/myhome")
+        setUserStep(FOOTER_STEPS.HOME)
       }}
           >Actually, I'd rather continue as a guest</Button>
-          </Grid>
+          </Grid>}
       </Grid>
       </Box>
     </Box>
+    </>
   );
 }
 
