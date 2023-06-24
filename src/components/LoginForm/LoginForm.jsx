@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useRef } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { UserContext } from "../../utils/UserContext";
 import { FormStepContext } from "../../utils/FormStepContext";
-import { STEPS } from "../../utils/formSteps";
+import { STEPS, FOOTER_STEPS } from "../../utils/formSteps";
 import { auth } from "../../utils/firebaseSetup";
 import { redirect, useLocation, useNavigate } from "react-router-dom";
 import Header from "../Header/Header";
@@ -17,7 +17,7 @@ const {
 login, hasDoneNewUserFormBefore,
   } = useContext(UserContext);
 
-        const { formStep, setFormStep } = useContext(FormStepContext)
+        const { formStep, setFormStep, setUserStep } = useContext(FormStepContext)
 
 
 
@@ -42,6 +42,7 @@ const navigate = useNavigate()
                     // const { user } = await login(data.email, data.password)
         alert ("Successfully logged in")
         navigate("/myhome")
+        setUserStep(FOOTER_STEPS.HOME)
         } catch (error) {
         console.error(error)
         alert ("Login failed:", error);
