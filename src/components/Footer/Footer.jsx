@@ -24,6 +24,7 @@ const iconBtnData = [
         link: "/myhome",
         name: "My Home",
         stepName: FOOTER_STEPS.HOME,
+        stepValue: 'HOME_STEP',
         active: true,
     },
     {
@@ -32,6 +33,7 @@ const iconBtnData = [
         link: "/habits",
         name: "Habits",
         stepName: FOOTER_STEPS.HABITS,
+        stepValue: 'HABITS_STEP',
         active: false
     },
     {
@@ -40,6 +42,7 @@ const iconBtnData = [
         link: "/ideas",
         name: "Ideas",
         stepName: FOOTER_STEPS.IDEAS,
+        stepValue: 'IDEAS_STEP',
         active: false
     },
     {
@@ -48,6 +51,7 @@ const iconBtnData = [
         link: "/profile",
         name: "Profile",
         stepName: FOOTER_STEPS.PROFILE,
+        stepValue: 'PROFILE_STEP',
         active: false
     },
 ]
@@ -59,23 +63,23 @@ function Footer() {
 
     const [value, setValue] = useState(0);
 
-    const [active, setActive] = useState("")
+    const [active, setActive] = useState("My Home")
 
     const [navItems, setNavItems] = useState(iconBtnData);
 
-    const { setUserStep } = useContext(FormStepContext)
+    const { userStep, setUserStep } = useContext(FormStepContext)
 
-    useEffect(() => {
-        console.log(active)
-    }, [active])
+    // useEffect(() => {
+    //     console.log(active)
+    // }, [active])
 
     //  put component to return in btn object
 
-    const [currentLink, setCurrentLink] = useState("/myhome")
+    // const [currentLink, setCurrentLink] = useState("/myhome")
 
-    useEffect(() => {
-        navigate(currentLink)
-    }, [currentLink])
+    // useEffect(() => {
+    //     navigate(currentLink)
+    // }, [currentLink])
 
 
     const lightBlue = theme.palette.darkBluePrimary.main
@@ -96,7 +100,7 @@ function Footer() {
     }
 
     const iconBtns = navItems.map((navItem, index) => (
-         navItem.active ?
+         userStep === navItem.stepValue ?
             <Button
             key={navItem.id}
                 sx={{
@@ -135,8 +139,8 @@ function Footer() {
                     }
                 }}
                 onClick={() => {
-                    setActive(navItem.name)
-                    changeActiveNavItem(index)
+                    // setActive(navItem.name)
+                    // changeActiveNavItem(index)
                     setUserStep(navItem.stepName)
                     }
                     }
