@@ -1,6 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import { getCurrentFormStep } from "../../utils/helpers";
 import { FormStepContext } from "../../utils/FormStepContext";
+import { UserContext } from "../../utils/UserContext";
 import Header from "../Header/Header";
 import { STEPS } from "../../utils/formSteps";
 
@@ -8,6 +9,8 @@ import { STEPS } from "../../utils/formSteps";
 function NewUserForm() {
    
        const { formStep } = useContext(FormStepContext)
+
+        const { guestUser } = useContext(UserContext)
 
        useEffect(() => {
        if (formStep !== STEPS.WELCOME) {
