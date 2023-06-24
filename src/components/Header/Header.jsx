@@ -47,20 +47,34 @@ const navItemsIfSignedOut = [
     link: '/logout',
   }, ];
 
+  const navItemsIfGuest = [
+  {
+    id: 1,
+    name: 'Guest Home',
+    link: '/myhome',
+  }
+  ,
+  {
+    id: 2,
+    name: 'Log In',
+    link: '/login',
+  }, ];
+
 function Header(props) {
     const { window } = props
 
-    const {currentUser, guestUser, logout, setJustLoggedOut} = useContext(UserContext)
+    const {currentUser, guestUser, logout, setJustLoggedOut, openConfirmModal, setOpenConfirmModal,
+    handleOpenModal, handleCloseModal,} = useContext(UserContext)
 
-     const [openConfirmModal, setOpenConfirmModal] = useState(false);
+//      const [openConfirmModal, setOpenConfirmModal] = useState(false);
 
-  const handleOpenModal = () => {
-    setOpenConfirmModal(true);
-  };
+//   const handleOpenModal = () => {
+//     setOpenConfirmModal(true);
+//   };
 
-  const handleCloseModal = () => {
-    setOpenConfirmModal(false);
-  };
+//   const handleCloseModal = () => {
+//     setOpenConfirmModal(false);
+//   };
 
     const [currentNav, setCurrentNav] = useState(navItemsIfSignedOut)
 
@@ -75,8 +89,15 @@ function Header(props) {
 
 
 useEffect(() => {
-    (auth?.currentUser || guestUser) ? setCurrentNav(navItemsIfSignedIn) : setCurrentNav(navItemsIfSignedOut)
+    // (auth?.currentUser || guestUser) ? setCurrentNav(navItemsIfSignedIn) : setCurrentNav(navItemsIfSignedOut)
 
+if (auth?.currentUser) {
+    setCurrentNav(navItemsIfSignedIn)
+} else if (guestUser) {
+    setCurrentNav(navItemsIfGuest)
+} else {
+    setCurrentNav(navItemsIfSignedOut)
+}
     // handleNav()
 }, [currentUser])
 
@@ -107,30 +128,27 @@ sx={{
       </Typography>
       <List>
         {currentNav.map((item) => (
-          <ListItem key={item.id} disablePadding>
-            <ListItemButton to={item.name !== "Log Out" ? item.link : ""} sx={{ textAlign: 'center',
+          <ListItem key={item.id}
+          sx={{
+            justifyContent: "center",
+            WebkitJustifyContent: "center",
             "&:hover": {
             bgcolor: theme.palette.lightBluePrimary.main,
-            } }}
-            onClick={(() => {
+         } }}
+          >
+          <Link to={item.name !== "Log Out" ? item.link : ""}
+          onClick={(() => {
                 if (item.name === "Log Out") {
                 handleOpenModal()
                 }
-            //     if (item.name === "Log Out" && confirmLogout) {
-            //         try {
-            //         logout()
-            //         setJustLoggedOut(true)
-            //         navigate("/logout")
-            //         // setConfirmLogout(false)
-            //    } catch(err) {
-            //     alert(err)
-            //    }
-            //     }
-                // setConfirmLogout(false)
             })}
-            >
+            style={{
+                color: "#000",
+                textDecoration: "none",
+            }}
+          >
               <ListItemText primary={item.name} />
-            </ListItemButton>
+            </Link>
           </ListItem>
         ))}
       </List>
@@ -178,17 +196,6 @@ sx={{
                   if (item.name === "Log Out") {
                 handleOpenModal()
                 }
-            //     if (item.name === "Log Out" && confirmLogout) {
-            //         try {
-            //         logout()
-            //         setJustLoggedOut(true)
-            //         navigate("/logout")
-            //         // setConfirmLogout(false)
-            //    } catch(err) {
-            //     alert(err)
-            //    }
-            //     }
-            //     setConfirmLogout(false)
             })}
                >
                 <Button color="darkBluePrimary" sx={{ color: '#fff', marginRight: "0.5rem" }}
@@ -220,8 +227,8 @@ sx={{
         </Drawer>
       </Box>
       <ConfirmLogoutModal
-      openConfirmModal={openConfirmModal}
-      handleCloseModal={handleCloseModal}
+    //   openConfirmModal={openConfirmModal}
+    //   handleCloseModal={handleCloseModal}
       />
     </Box>
   );
