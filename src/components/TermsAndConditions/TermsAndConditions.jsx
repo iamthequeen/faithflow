@@ -6,7 +6,7 @@ import { FormStepContext } from "../../utils/FormStepContext";
 import { FOOTER_STEPS } from "../../utils/formSteps"
 
 const Para = styled(Typography)({
-padding: "1rem 0",
+padding: "1rem",
 })
 
 function TermsAndConditions() {
