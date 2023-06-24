@@ -15,9 +15,12 @@ import {
   useTheme,
 } from "@mui/material";
 import HabitTrackerPage from '../../pages/HabitTrackerPage/HabitTrackerPage';
+import LoadingModal from '../ui/LoadingModal/LoadingModal';
+import { useState } from 'react';
 
-function HabitsModal({ open, handleClose }) {
+function HabitsModal({ open, handleClose, setOpen}) {
     const theme = useTheme()
+
 
     return (
         <Dialog open={open} onClose={handleClose}>
@@ -35,8 +38,13 @@ function HabitsModal({ open, handleClose }) {
         </DialogTitle>*/}
         
         <DialogContent>
-       <HabitTrackerPage handleClose={handleClose} />
+       <HabitTrackerPage
+       open={open}
+       setOpen={setOpen}
+       handleClose={handleClose}
+       />
         </DialogContent>
+ 
       </Box>
     </Dialog>
     )
